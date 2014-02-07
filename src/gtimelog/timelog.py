@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 Non-GUI bits of gtimelog.
 """
@@ -347,6 +350,37 @@ class TimeWindow(object):
             output.write("DTSTAMP:%s\n" % dtstamp)
             output.write("END:VEVENT\n")
         output.write("END:VCALENDAR\n")
+
+    def edit_entry(self, line, edited_line):
+        f = codecs.open(self.filename, 'r', encoding='UTF-8')
+        content = f.read()
+        f.close()
+
+        content = content.replace(line, edited_line)
+
+        f = codecs.open(self.filename, 'w', encoding='UTF-8')        
+        f.write(content)
+        f.close()
+
+    def to_flyspray(self, url):
+        """Export work entries to a Flyspray, as some company track working time in flyspray 'huh!!!!'
+
+        report.php?title=blablabla&openeddate=2014-01-31&time=(in minutes)
+        """
+        for start, stop, duration, entry in self.all_entries():
+            if ('ReportedFS#' not in entry) and ('**' not in entry):
+                params = urllib.urlencode({'title': entry.encode('utf-8'),
+                                           'openeddate': start.strftime('%Y%m%d'),
+                                           'minutes': str(as_minutes(duration))})
+
+                txtentry = stop.strftime('%Y-%m-%d %H:%M')+': '+entry                
+                
+                f = urllib.urlopen("%s?%s" % (url, params))
+                fsid = int(f.read())
+                if fsid != 'fail':
+                    self.edit_entry(txtentry, txtentry+' ReportedFS#%d' % fsid)
+                    #TODO ADD ID IN TIMELOG
+
 
     def to_csv_complete(self, output, title_row=True):
         """Export work entries to a CSV file.

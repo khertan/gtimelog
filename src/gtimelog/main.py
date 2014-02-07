@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """An application for keeping track of your time."""
 
 # Default to new-style classes.
@@ -822,6 +825,11 @@ class MainWindow:
         if not day:
             day = self.timelog.day
         return self.timelog.window_for_day(day)
+
+    def on_flyspray_report_activate(self, widget):
+        """File -> Flyspray Report"""
+        timelog = self.timelog.whole_history()
+        timelog.to_flyspray(self.settings.flyspray_url)
 
     def on_daily_report_activate(self, widget):
         """File -> Daily Report"""

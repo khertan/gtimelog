@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 Settings for GTimeLog
 """
@@ -53,6 +56,7 @@ class Settings(object):
     start_in_tray = False
 
     report_style = 'plain'
+    flyspray_url = ''
 
     def check_legacy_config(self):
         envar_home = os.environ.get('GTIMELOG_HOME')
@@ -111,6 +115,7 @@ class Settings(object):
                    str(self.prefer_old_tray_icon))
         config.set('gtimelog', 'report_style', str(self.report_style))
         config.set('gtimelog', 'start_in_tray', str(self.start_in_tray))
+        config.set('gtimelog', 'flyspray_url', self.flyspray_url)
         return config
 
     if PY3:
@@ -147,6 +152,7 @@ class Settings(object):
                                                       'prefer_old_tray_icon')
         self.report_style = config.get('gtimelog', 'report_style')
         self.start_in_tray = config.getboolean('gtimelog', 'start_in_tray')
+        self.flyspray_url = config.get('gtimelog', 'flyspray_url')
 
     def save(self, filename):
         config = self._config()
